@@ -1,0 +1,19 @@
+# virtual enviroment
+venv/
+
+# Environment variables
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Model artifacts
+models/*.pkl
+models/*.joblib
+
+# personal notes
+notes.txt
+
+# raw data
+data/raw
+
