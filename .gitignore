@@ -15,7 +15,9 @@ models/*.joblib
 notes.txt
 
 # raw data
-data/raw
+data/raw_data
 
 notes.txt
+
+__pycache__/
 
