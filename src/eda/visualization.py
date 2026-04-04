@@ -47,28 +47,28 @@ def plot_boxplot(
 
     for i, var in enumerate(vars):
 
-        # Conditional selection of top values (only most frequent categories)
+        # Filtrar top_n categorías o valores más frecuentes
         if top_n is not None:
-            top_values = df_plot[var].value_counts().nlargest(top_n).index
-            df_plot = df_plot[df_plot[var].isin(top_values)]
+            top_values = (df_plot[var].value_counts().nlargest(top_n).index)
+            df_plot_top = df_plot[df_plot[var].isin(top_values)]
         else:
-            df_plot = df_plot
+            df_plot_top = df_plot.copy()
 
         # Detect variable type
-        if pd.api.types.is_numeric_dtype(df_plot[var]):
+        if pd.api.types.is_numeric_dtype(df_plot_top[var]):
             # Numeric → natural order
-            order = sorted(df_plot[var].unique())
+            order = sorted(df_plot_top[var].unique())
         else:
             # Categorical → order by median of target
             order = (
-                df_plot.groupby(var, observed=False)[target]
+                df_plot_top.groupby(var, observed=False)[target]
                 .median()
                 .sort_values(ascending=False)
                 .index
             )
 
         # Create boxplot
-        sns.boxplot(x=df_plot[var], y=df_plot[target], ax=axes[i], order=order)
+        sns.boxplot(x=df_plot_top[var], y=df_plot_top[target], ax=axes[i], order=order)
         axes[i].set_title(f"{target} by {var}")
         axes[i].set_xlabel(var)
         axes[i].set_ylabel(target)
@@ -141,13 +141,11 @@ def plot_barplot(
 
         # Conditional selection of top values (only most frequent categories)
         if top_n is not None:
-            top_values = df_plot[var].value_counts().nlargest(top_n).index
-            df_plot = df_plot[df_plot[var].isin(top_values)]
+            counts = df_plot[var].value_counts().nlargest(top_n)
         else:
-            df_plot = df_plot
+            counts = df_plot[var].value_counts()
 
-        # Count frequencies and plot as barplot
-        counts = df_plot[var].value_counts()
+        # Plot barplot with filtered counts
         axes[i].bar(counts.index, counts.values)
 
         # Set titles and labels
@@ -187,7 +185,8 @@ def plot_histogram(
     figsize_width=12, 
     figsize_height=None,
     bins=50, 
-    kde=False
+    kde=False,
+    binrange=None
 ):
     """
     Plot histograms for one or multiple variables.
@@ -204,6 +203,8 @@ def plot_histogram(
         Height of the figure. If None, it is set to 4 times the number of variables.
     bins : int, default=50
         Number of bins for the histogram.
+    binrange : tuple, optional
+        Value range for the histogram (default=None → full data range).
     kde : bool, default=False
         Whether to include a Kernel Density Estimate curve.
     """
@@ -221,10 +222,16 @@ def plot_histogram(
     # Ensure axes is iterable when only one variable is plotted
     if len(vars) == 1:
         axes = [axes]
+    
+    # Set histogram 
+    if binrange is None:
+        binrange = (df_plot[vars].min().min(), df_plot[vars].max().max())
 
     for i, var in enumerate(vars):
+        
         # Plot histogram for each variable
-        sns.histplot(df_plot[var], bins=bins, kde=False, ax=axes[i])
+        sns.histplot(df_plot[var], bins=bins, binrange=binrange, kde=False, ax=axes[i])
+
         axes[i].set_title(f"Distribution of {var}")
         axes[i].set_xlabel(var)
         axes[i].set_ylabel("Count")
@@ -267,7 +274,7 @@ def plot_regplot(
     df, 
     vars, 
     target,
-    figsize_width=12, 
+    figsize_width=10, 
     figsize_height=None,
     alpha=0.3
 ):
