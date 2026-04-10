@@ -37,7 +37,10 @@ def basic_profile(df, features_list):
         "null_ratio_%": (data.isnull().mean() * 100).round(2)
     })
 
-    return summary.sort_index()
+    print("======== Basic Profile ========")
+    display(summary.sort_index())
+
+    #return summary.sort_index()
 
 # ============= ADVANCED PROFILE =======================
 def advanced_profile(df, vars_to_check):
@@ -81,7 +84,7 @@ def advanced_profile(df, vars_to_check):
         unique = series.nunique()
         
         # Handle categorical variables
-        if series.dtype == "object" or series.dtype.name == "category":
+        if series.dtype == "object" or series.dtype.name == "category" or series.dtype == "str":
             mode_val = series.mode().iloc[0] if not series.mode().empty else None
             mode_freq = series.value_counts().iloc[0]
             mode_ratio = mode_freq / total
