@@ -158,5 +158,3 @@ def advanced_profile(df, vars_to_check):
     if num_summary is not None:
         print("\n===== Numerical Statistics =====\n")
         print(num_summary)
-    
-    #return cat_summary, num_summary
