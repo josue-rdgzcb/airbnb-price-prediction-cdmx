@@ -37,8 +37,8 @@ def basic_profile(df, features_list):
         "null_ratio_%": (data.isnull().mean() * 100).round(2)
     })
 
-    print("======== Basic Profile ========")
-    display(summary.sort_index())
+    print("======== Basic Profile ========\n")
+    print(summary.sort_index())
 
     #return summary.sort_index()
 
@@ -153,10 +153,10 @@ def advanced_profile(df, vars_to_check):
     
     # Print with titles and display formatting
     if cat_summary is not None:
-        print("===== Categorical Statistics =====")
-        display(cat_summary)
+        print("===== Categorical Statistics =====\n")
+        print(cat_summary)
     if num_summary is not None:
-        print("\n===== Numerical Statistics =====")
-        display(num_summary)
+        print("\n===== Numerical Statistics =====\n")
+        print(num_summary)
     
     #return cat_summary, num_summary
