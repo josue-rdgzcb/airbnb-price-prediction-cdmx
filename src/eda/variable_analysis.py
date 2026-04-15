@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-# ========================= CATEGORICAL VARIABLES ==================================
+# ========================= CATEGORICAL VARIABLES ===================================================================================
 
 def analyze_categorical_vars(df, vars, target, rows=None):
     """
@@ -132,7 +132,7 @@ def analyze_categorical_vars(df, vars, target, rows=None):
         except Exception as e:
             print(f"\nCorrelation ratio: Error ({e})")
 
-# ========================= NUMERICAL VARIABLES ==================================
+# ========================= NUMERICAL VARIABLES ==============================================================================
 
 def analyze_numeric_vars(df, vars, target):
     """
@@ -265,4 +265,54 @@ def analyze_numeric_vars(df, vars, target):
         except Exception as e:
             print(f"\nCorrelation: Error computing ({e})")
 
+#=================== BINNING ====================================================================================================
 
+def binning(df, vars, target, q=5, duplicates='drop'):
+    """
+    Perform quantile-based binning on selected variables and compute 
+    the median of a target variable along with the proportion of records 
+    in each bin.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        The input DataFrame containing the variables and target.
+    vars : list of str
+        List of column names to be binned.
+    target : str
+        The target column (e.g., 'log_price') to compute medians.
+    q : int, optional (default=5)
+        Number of quantile bins to create using pd.qcut.
+    duplicates : {'raise', 'drop'}, optional (default='drop')
+        How to handle duplicate bin edges. 'drop' removes bins with identical edges.
+    
+    Notes
+    -----
+    This function modifies the input DataFrame in place by adding new columns 
+    with the suffix '_binned' for each variable processed.
+    """
+
+    for col in vars:
+        col_bin = f"{col}_binned"
+
+        try:
+            # Apply quantile-based binning to the original column
+            df[col_bin] = pd.qcut(df[col], q=q, duplicates=duplicates)
+
+            # Compute median of target variable per bin
+            median_vals = df.groupby(col_bin)[target].median()
+
+            # Compute proportion (%) of records in each bin
+            proportions = df[col_bin].value_counts(normalize=True).sort_index()
+
+            # Create summary DataFrame with median and proportion
+            summary_bins = pd.DataFrame({
+                'median': median_vals,
+                'proportion': proportions
+            }).round(2)
+
+            # Print summary for each variable
+            print(f"{summary_bins}\n")
+
+        except Exception as e:
+            print(f"Error in binning {col}: {e}")
