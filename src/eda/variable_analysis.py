@@ -312,6 +312,7 @@ def binning(df, vars, target, q=5, duplicates='drop'):
             }).round(2)
 
             # Print summary for each variable
+            print(f"\n{'='*10} Binning Analysis {'='*10}")
             print(f"{summary_bins}\n")
 
         except Exception as e:
