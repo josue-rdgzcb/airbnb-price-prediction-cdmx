@@ -17,6 +17,9 @@ notes.txt
 # raw data
 data/raw_data
 
+data/external_data
+
+
 notes.txt
 
 __pycache__/
