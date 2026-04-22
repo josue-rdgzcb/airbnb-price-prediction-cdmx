@@ -14,10 +14,10 @@ models/*.joblib
 # personal notes
 notes.txt
 
-# raw data
-data/raw_data
-
-data/external_data
+# data
+data/raw
+data/external
+data/processed
 
 
 notes.txt
