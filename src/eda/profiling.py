@@ -29,6 +29,7 @@ def basic_profile(df, features_list):
 
     data = df[features_list]
 
+    # Summary
     summary = pd.DataFrame({
         "data_type": data.dtypes,
         "non_null": data.notnull().sum(),
