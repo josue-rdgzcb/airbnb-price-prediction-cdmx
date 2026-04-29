@@ -11,3 +11,12 @@ def get_pois_attractions():
     df = df.dropna(subset=["latitude", "longitude"])
 
     return df[["latitude", "longitude"]].values 
+
+def get_pois_commercial():
+    path = BASE_DIR / "data/external/pois_commercial.csv"
+
+    df = pd.read_csv(path)
+
+    df = df.dropna(subset=["latitude", "longitude"])
+
+    return df[["latitude", "longitude"]].values 
