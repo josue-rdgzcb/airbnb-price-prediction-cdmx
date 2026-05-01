@@ -54,7 +54,7 @@ def validate_features(df, features_list, target):
             continue
 
         # =============== Numeric Features ===============
-        if pd.api.types.is_numeric_dtype(df[col]):
+        if pd.api.types.is_numeric_dtype(df[col]) and not pd.api.types.is_bool_dtype(df[col]):
             try:
                 stats_dict = {
                     "mean": df[col].mean(),
