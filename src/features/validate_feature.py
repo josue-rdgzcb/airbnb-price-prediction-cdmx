@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-def validate_feature(df, features_list, target):
+def validate_features(df, features_list, target):
     """
     Validate and profile multiple features in a DataFrame.
 

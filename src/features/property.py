@@ -1,3 +1,6 @@
+# Import preprocessing function for string normalization
+from src.features.preprocess import normalize_string_column
+
 # Map raw property_type strings into broader property groups
 def map_property_type(pt: str) -> str:
     """
@@ -22,4 +25,17 @@ def map_property_type(pt: str) -> str:
         return "unique/nature"
     else:
         return "other"
+
+# Feature: group property types into broader categories
+def add_property_group(df):
+    df["property_group"] = df["property_type"].apply(map_property_type)
+
+    return df
+
+# Feature: combine property group with normalized room type
+def add_property_group_room(df):
+    df["room_type"] = normalize_string_column(df["room_type"])
+    df["property_group_room"] = df["property_group"] + "_" + df["room_type"]
+    
+    return df
 
