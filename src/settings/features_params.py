@@ -71,3 +71,13 @@ AMENITIES_WEIGHTS = {
 AMENITIES_SCORE_MIN = 0.0
 AMENITIES_SCORE_MAX = 1.0
 
+# List of review score columns
+REVIEW_SCORE_COLUMNS = [
+    "review_scores_rating",
+    "review_scores_accuracy",
+    "review_scores_cleanliness",
+    "review_scores_checkin",
+    "review_scores_communication",
+    "review_scores_location",
+    "review_scores_value",
+]
