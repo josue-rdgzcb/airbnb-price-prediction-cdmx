@@ -1,36 +1,23 @@
- 
-import ast
 import re
 import pandas as pd
+# Import utility to parse stringified lists into Python lists
+from src.features.preprocess import parse_column
+
 
 # Import amenity parameters from settings
 from src.settings.features_params import (
     SELECTED_AMENITIES,
     AMENITIES_WEIGHTS
 )
-
-# Parse amenities column into Python lists
-def _parse_amenities(x):
-    """
-    Parse a stringified amenities value into a Python list.
-    - Return [] if value is NaN or cannot be parsed.
-    """
-    if pd.isna(x):
-        return []
-    
-    try:
-        return ast.literal_eval(x)
-    except (ValueError, SyntaxError):
-        return []
     
 # Create amenities_list column by parsing stringified lists
-def add_amenities_list(df):
+def amenities_list(df):
     """
     Parse the 'amenities' column into Python lists and
     add a new column 'amenities_list' if not already present.
     """
     if "amenities_list" not in df.columns:
-        df["amenities_list"] = df["amenities"].apply(_parse_amenities)
+        df["amenities_list"] = df["amenities"].apply(parse_column)
     return df
 
 # Clean individual amenity string
@@ -49,7 +36,9 @@ def add_amenity_count(df):
     """
     Add a feature column 'amenity_count' with the number of amenities per listing.
     """
-    df = add_amenities_list(df)
+    if "amenities_list" not in df.columns:
+        df = amenities_list(df)
+
     df["amenity_count"] = df["amenities_list"].apply(len)
     return df
 
@@ -68,7 +57,7 @@ def add_amenity_count_binned(df):
     return df
 
 # Cleaning and normalizing amenities list
-def add_amenities_list_clean(df):
+def amenities_list_clean(df):
     """
     Clean and normalize amenities list:
     - Ensure 'amenities_list' exists
@@ -110,7 +99,7 @@ def add_special_amenities(df):
     - Pool (excluding pool table, whirlpool variants)
     - Streaming platforms (Netflix, HBO, etc.)
     """
-    df = add_amenities_list_clean(df)
+    df = amenities_list_clean(df)
 
     # Washer (excluding dishwasher)
     df["has_washer"] = df["amenities_set"].apply(
@@ -141,7 +130,7 @@ def add_simple_amenities(df):
     Add binary features for a predefined list of simple amenities.
     Returns DataFrame and list of created column names.
     """
-    df = add_amenities_list_clean(df)
+    df = amenities_list_clean(df)
 
     simple_amenities = [
         'wifi','kitchen','hot water','essentials','bed linens','microwave',
