@@ -52,10 +52,11 @@ def build_features(df):
     df = add_amenity_score(df)                  # Compute weighted amenity score
 
     # HOST features
-    df = add_host_verifications_grouped(df)     #
+    df = add_host_verifications_grouped(df)     # Group host verifications into categories
 
     # REVIEWS features
-    df = add
+    df = add_review_scores_mean(df)             # Compute mean of review score columns
+    df = add_has_review(df)                     # Add binary indicator if listing has any review
 
     return df
 
