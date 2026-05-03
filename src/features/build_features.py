@@ -31,6 +31,26 @@ from src.features.reviews import(
 # ================= MAIN PIPELINE TO BUILD FEATURES FOR THE DATASET =================
 def build_features(df):
 
+    """
+    Build engineered features for the dataset.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Input DataFrame containing raw listing data.
+
+    Returns
+    -------
+    pandas.DataFrame
+        A copy of the input DataFrame with additional engineered features:
+        - GEO features: distance to nearest attraction, attractions density, commercial density
+        - PROPERTY features: property type grouping, room type grouping
+        - BOOKING RESTRICTIONS features: minimum nights segment
+        - AMENITIES features: amenities count, binned count, binary indicators, weighted score
+        - HOST features: grouped host verifications
+        - REVIEWS features: mean of review score columns, binary indicator for presence of reviews
+    """
+
     df = df.copy()  # Work on a copy to avoid modifying original DataFrame
 
     # GEO features
