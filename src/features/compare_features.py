@@ -33,10 +33,20 @@ def transform_feature(df, col, target="log_price"):
 
     results = []
     for name, series in features.items():
+        # Outliers
+        q1 = series.quantile(0.25)
+        q3 = series.quantile(0.75)
+        iqr = q3 - q1
+        lower_bound = q1 - 1.5 * iqr
+        upper_bound = q3 + 1.5 * iqr
+        outliers = ((series < lower_bound) | (series > upper_bound)).sum()
+        outliers_pct = round(outliers / len(series), 4)
+
         results.append({
             "transformation": name,
             "mean": round(series.mean(), 4),
             "std": round(series.std(), 4),
+            "outliers_%": outliers_pct,
             "skew": round(series.skew(), 4),
             "corr_with_target": round(series.corr(df[target]), 4)
         })
