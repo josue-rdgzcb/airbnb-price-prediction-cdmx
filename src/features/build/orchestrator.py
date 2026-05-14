@@ -15,7 +15,6 @@ from src.features.build.booking_restrictions import(
 
 from src.features.build.amenities import(
     add_amenity_count,
-    add_amenity_count_binned,
     add_has_amenity_features,
     add_amenity_score
 )
@@ -67,8 +66,7 @@ def build_features(df):
 
     # AMENITIES features
     df = add_amenity_count(df)                  # Count number of amenities per listing
-    df = add_amenity_count_binned(df)           # Bin amenities count into low, medium, high categories
-    df = add_has_amenity_features(df)        # Add binary features (has_amenity)
+    df = add_has_amenity_features(df)           # Add binary features (has_amenity)
     df = add_amenity_score(df)                  # Compute weighted amenity score
 
     # HOST features
