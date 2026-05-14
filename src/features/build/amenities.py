@@ -16,8 +16,18 @@ def amenities_list(df):
     Parse the 'amenities' column into Python lists and
     add a new column 'amenities_list' if not already present.
     """
+    df["amenities_list"] = df["amenities"].apply(parse_column)
+    return df
+
+# Feature: count number of amenities per listing
+def add_amenity_count(df):
+    """
+    Add a feature column 'amenity_count' with the number of amenities per listing.
+    """
     if "amenities_list" not in df.columns:
-        df["amenities_list"] = df["amenities"].apply(parse_column)
+        df = amenities_list(df)
+
+    df["amenity_count"] = df["amenities_list"].apply(len)
     return df
 
 # Clean individual amenity string
@@ -31,31 +41,6 @@ def _clean_amenity(a: str) -> str:
     return re.sub(r'[^a-z0-9\s+\-]', '', a.lower()).strip()
 
 
-# Feature: count number of amenities per listing
-def add_amenity_count(df):
-    """
-    Add a feature column 'amenity_count' with the number of amenities per listing.
-    """
-    if "amenities_list" not in df.columns:
-        df = amenities_list(df)
-
-    df["amenity_count"] = df["amenities_list"].apply(len)
-    return df
-
-
-# Feature: binning amenities count into categories
-def add_amenity_count_binned(df):
-    """
-    Bin 'amenity_count' into categories: low, medium, high.
-    """
-    df = add_amenity_count(df)
-    df["amenity_count_binned"] = pd.qcut(
-        df["amenity_count"],
-        q=3,
-        labels=["low", "medium", "high"]
-    )
-    return df
-
 # Cleaning and normalizing amenities list
 def amenities_list_clean(df):
     """
@@ -64,8 +49,9 @@ def amenities_list_clean(df):
     - Create 'amenities_list_clean' with normalized strings
     - Create 'amenities_set' for set-based operations
     """
+
     if "amenities_list" not in df.columns:
-        raise ValueError("amenities_list not found. Run add_amenities_list first.")
+        df = amenities_list(df)
 
     if "amenities_list_clean" not in df.columns:
         df["amenities_list_clean"] = df["amenities_list"].apply(
@@ -153,9 +139,8 @@ def add_simple_amenities(df):
         df[col] = df["amenities_set"].apply(
             lambda s: any(amenity in a for a in s)
         )
-        created_cols.append(col)
 
-    return df, created_cols
+    return df
 
 
 # Feature: orchestrator -> combine special and simple amenities
@@ -166,6 +151,10 @@ def add_has_amenity_features(df):
     """
     df = add_special_amenities(df)
     df = add_simple_amenities(df)
+
+    # Drop intermediate columns not needed in final dataset
+    drop_cols = ["amenities_list", "amenities_list_clean", "amenities_set"]
+    df = df.drop(columns=[c for c in drop_cols if c in df.columns])
     
     return df
 
@@ -178,4 +167,5 @@ def add_amenity_score(df):
     for col in SELECTED_AMENITIES:
         if col in df.columns:
             df["amenity_score"] += df[col] * AMENITIES_WEIGHTS[col]
+            
     return df
